@@ -5,7 +5,11 @@ import csv
 
 file_header = ['hashtag', 'created_at', 'id', 'lang', 'source', 'like_count', 'quote_count', 'reply_count',
                'retweet_count', 'text', 'hashtags']
+file_header_count = ['hashtag', 'count']
+
 data_rows = []
+data_rows_counter = []
+
 hash_tag_list = ['#ukrainewar', '#war', '#army', '#military', '#kiev', '#ua', '#specialforces', '#donbass',
                  '#donbasswar', '#airsoft', '#nomockal', '#warukraine', '#tactics', '#azovsea', '#militarystile',
                  '#azov', '#russia', '#donetsk', '#soldiers', '#ukrainenews', '#odessa', '#ukrainianarmy', '#lviv',
@@ -15,15 +19,7 @@ hash_tag_list = ['#ukrainewar', '#war', '#army', '#military', '#kiev', '#ua', '#
 bearer_token = 'AAAAAAAAAAAAAAAAAAAAADOHcAEAAAAAhGlt5ETi6uLI3oIFADPPWilii7c%3DakUXvErYQxMTHGUjdjxhhTKJhyFENNW4Z5ysKYjYFtdrdO18uT'  # os.environ.get("BEARER_TOKEN")
 
 search_url = "https://api.twitter.com/2/tweets/search/recent"
-
-
-# Optional params: start_time,end_time,since_id,until_id,max_results,next_token,
-# expansions,tweet.fields,media.fields,poll.fields,place.fields,user.fields
-# query_params = {'query': '#ukrainewar',
-#                 'tweet.fields': 'created_at,lang,public_metrics,referenced_tweets,text,entities,id,'
-#                                 'possibly_sensitive,source,withheld,attachments',
-#                 'max_results': 100
-#                 }
+count_url = "https://api.twitter.com/2/tweets/counts/recent"
 
 
 def bearer_oauth(r):
@@ -62,7 +58,7 @@ def connect_to_endpoint(url, params, hash_tag):
             data_rows.append(data_row)
             data_row = []
 
-    with open('G:\\test\\test.csv', 'w', encoding='UTF8', newline='') as f:
+    with open('G:\\test\\posts.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(file_header)
         writer.writerows(data_rows)
@@ -72,16 +68,46 @@ def connect_to_endpoint(url, params, hash_tag):
     return response.json()
 
 
+def get_counts(url, params, hash_tag):
+
+    response = requests.get(url, auth=bearer_oauth, params=params)
+    print(response.status_code)
+
+    if response.json().get('meta'):
+        return [hash_tag, response.json()['meta']['total_tweet_count']]
+
+    return response.json()
+
+
 def main():
+    # with open('G:\\test\\posts.csv', 'w', encoding='UTF8', newline='') as f:
+    #     writer = csv.writer(f)
+    #     writer.writerow(file_header)
+    #
+    # with open('G:\\test\\count.csv', 'w', encoding='UTF8', newline='') as f:
+    #     writer = csv.writer(f)
+    #     writer.writerow(file_header_count)
+
     for hash_tag in hash_tag_list:
         query_params = {'query': hash_tag,
                         'tweet.fields': 'created_at,lang,public_metrics,referenced_tweets,text,entities,id,'
                                         'possibly_sensitive,source,withheld,attachments',
                         'max_results': 100
                         }
-        json_response = connect_to_endpoint(search_url, query_params, hash_tag)
-        print(json.dumps(json_response, indent=4, sort_keys=True))
 
+        counter_param = {'query': hash_tag}
+
+        count = get_counts(count_url, counter_param, hash_tag)
+        data_rows_counter.append(count)
+
+        # json_response = connect_to_endpoint(search_url, query_params, hash_tag)
+        # print(json.dumps(json_response, indent=4, sort_keys=True))
+        # print(json.dumps(json_response_counter, indent=4, sort_keys=True))
+
+    with open('G:\\test\\count.csv', 'w', encoding='UTF8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(file_header_count)
+        writer.writerows(data_rows_counter)
 
 if __name__ == "__main__":
     main()
