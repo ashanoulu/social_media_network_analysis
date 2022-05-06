@@ -3,8 +3,8 @@ import os
 import json
 import csv
 
-file_header = ['hashtag', 'created_at', 'id', 'lang', 'source', 'like_count', 'quote_count', 'reply_count',
-               'retweet_count', 'text', 'hashtags']
+file_header = ['num', 'hashtag', 'created_at', 'id', 'lang', 'source', 'like_count', 'quote_count', 'reply_count',
+               'retweet_count', 'text', 'is_referenced_tweet', 'referenced_tweet_id', 'hashtags']
 file_header_count = ['hashtag', 'count']
 
 data_rows = []
@@ -20,6 +20,7 @@ bearer_token = 'AAAAAAAAAAAAAAAAAAAAADOHcAEAAAAAhGlt5ETi6uLI3oIFADPPWilii7c%3Dak
 
 search_url = "https://api.twitter.com/2/tweets/search/recent"
 count_url = "https://api.twitter.com/2/tweets/counts/recent"
+single_tweet_url = "https://api.twitter.com/2/tweets/"
 
 
 def bearer_oauth(r):
@@ -35,10 +36,12 @@ def connect_to_endpoint(url, params, hash_tag):
     response = requests.get(url, auth=bearer_oauth, params=params)
     print(response.status_code)
 
+    i = 1
     if response.json().get('data'):
         for tweet in response.json()['data']:
             data_row: list = []
 
+            data_row.append(i)
             data_row.append(hash_tag)
             data_row.append(tweet['created_at'])
             data_row.append(tweet['id'])
@@ -50,15 +53,28 @@ def connect_to_endpoint(url, params, hash_tag):
             data_row.append(tweet['public_metrics']['retweet_count'])
             data_row.append(tweet['text'])
 
-            if tweet['entities'].get('hashtags'):
-                for hashtag in tweet['entities']['hashtags']:
-                    data_row.append(hashtag['tag'])
-                print(tweet['lang'])
+            if tweet.get('referenced_tweets'):
+                data_row.append('true')
+                data_row.append(tweet['referenced_tweets'][0]['id'])
+
+
+                # data_row.append(single_tweet(single_tweet_url + tweet['referenced_tweets'][0]['id'] +'?tweet.fields=created_at,text'))
+            else:
+                data_row.append('false')
+                data_row.append('')
+
+
+
+            # if tweet['entities'].get('hashtags'):
+            #     for hashtag in tweet['entities']['hashtags']:
+            #         data_row.append(hashtag['tag'])
+            #     print(tweet['lang'])
 
             data_rows.append(data_row)
             data_row = []
+            i = i +1
 
-    with open('G:\\test\\posts.csv', 'w', encoding='UTF8', newline='') as f:
+    with open('G:\\test\\posts3.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(file_header)
         writer.writerows(data_rows)
@@ -69,7 +85,6 @@ def connect_to_endpoint(url, params, hash_tag):
 
 
 def get_counts(url, params, hash_tag):
-
     response = requests.get(url, auth=bearer_oauth, params=params)
     print(response.status_code)
 
@@ -77,6 +92,16 @@ def get_counts(url, params, hash_tag):
         return [hash_tag, response.json()['meta']['total_tweet_count']]
 
     return response.json()
+
+
+def single_tweet(url):
+    response = requests.get(url, auth=bearer_oauth)
+    print(response.status_code)
+    result = response.json()['data']
+    if result.get('text'):
+        return response.json()['data']['text']
+    else:
+        return ''
 
 
 def main():
@@ -97,17 +122,18 @@ def main():
 
         counter_param = {'query': hash_tag}
 
-        count = get_counts(count_url, counter_param, hash_tag)
-        data_rows_counter.append(count)
+        # count = get_counts(count_url, counter_param, hash_tag)
+        # data_rows_counter.append(count)
 
-        # json_response = connect_to_endpoint(search_url, query_params, hash_tag)
-        # print(json.dumps(json_response, indent=4, sort_keys=True))
+        json_response = connect_to_endpoint(search_url, query_params, hash_tag)
+        print(json.dumps(json_response, indent=4, sort_keys=True))
         # print(json.dumps(json_response_counter, indent=4, sort_keys=True))
 
     with open('G:\\test\\count.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(file_header_count)
         writer.writerows(data_rows_counter)
+
 
 if __name__ == "__main__":
     main()
