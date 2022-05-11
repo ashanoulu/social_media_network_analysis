@@ -5,12 +5,12 @@ import csv
 
 bearer_token = 'AAAAAAAAAAAAAAAAAAAAALDCcQEAAAAA0S%2BVPYHO9Asc1Hd5%2F3dVak0Nsew%3DmdbLOjr0JGcWjs0u93s4GUSOgH3WZxufFi0OsrdHpW04w7nd3W'  # os.environ.get("BEARER_TOKEN")
 
+multiple_tweet_url = "https://api.twitter.com/2/tweets?ids="
 single_tweet_url = "https://api.twitter.com/2/tweets/"
 
 # csv_path = 'G:\\test\\AllDetails.csv'
 csv_path = 'posts3.csv'
-start_count = 1
-end_count = 300
+
 
 
 def bearer_oauth(r):
@@ -22,8 +22,8 @@ def bearer_oauth(r):
     return r
 
 
-def update_csv(min, max):
-    df = panda.read_csv(csv_path, on_bad_lines='skip')
+def update_csv(min, max, df):
+
     # df = panda.read_csv(csv_path, on_bad_lines='skip', dtype={'referenced_tweet_id': 'Int64'})
     kk = df.index.values[0]
     num_of_rows = len(df)
@@ -32,38 +32,64 @@ def update_csv(min, max):
     if max > num_of_rows:
         max = num_of_rows
 
+    id_list = ''
     for i in range(min, max):
         row = df.loc[[i]]
-
-        # formatted_id = str(row['referenced_tweet_id'].values[0]).strip()
-
         if row['is_referenced_tweet'].values[0]:
             formatted_id = row['referenced_tweet_id'].values[0].split("TW")[1]
-            print(formatted_id + " " + str(row['num'].values[0]))
-            long_text = single_tweet(
-                single_tweet_url + formatted_id + '?tweet.fields=created_at,text')
-            if long_text != '':
-                df.loc[i, 'text'] = long_text
-                df.to_csv(csv_path, index=False)
+            if id_list == '':
+                id_list = formatted_id
+            id_list = id_list + ',' + formatted_id
+            # print(formatted_id + " " + str(row['num'].values[0]))
+            # long_text = single_tweet(
+            #     single_tweet_url + formatted_id + '?tweet.fields=created_at,text')
+            # if long_text != '':
+            #     df.loc[i, 'text'] = long_text
+            #     df.to_csv(csv_path, index=False)
+
+    tweet_list = get_tweets(multiple_tweet_url + id_list + '&tweet.fields=created_at,text')
+
+    for i in range(min, max):
+        row = df.loc[[i]]
+        if row['is_referenced_tweet'].values[0]:
+            formatted_id = row['referenced_tweet_id'].values[0].split("TW")[1]
+            df.loc[i, 'text'] = tweet_list.get(formatted_id)
+            df.to_csv(csv_path, index=False)
     # with open('posts32.csv', 'w', encoding='UTF8', newline='') as f:
     #     writer = csv.writer(f)
     #     writer.writerows(df)
 
-def single_tweet(url):
-    response = requests.get(url, auth=bearer_oauth)
-    print(response.json())
-    if response.json().get('data'):
-        result = response.json()['data']
-        if result.get('text'):
-            return response.json()['data']['text']
-        else:
-            return ''
-    else:
-        return ''
+
+
+def get_tweets(url):
+    response = requests.get(url, auth=bearer_oauth).json()
+    print(response)
+    tweets_dict = {}
+    if response.get('data'):
+        for tweet in response['data']:
+            tweets_dict[tweet['id']] = tweet['text']
+    return tweets_dict
+    #     if result.get('text'):
+    #         return response.json()['data']['text']
+    #     else:
+    #         return ''
+    # else:
+    #     return ''
 
 
 def main():
-    update_csv(start_count, end_count)
+    start_count = 0
+    end_count = 10
+    df = panda.read_csv(csv_path, on_bad_lines='skip')
+    num_of_rows = len(df)
+    while start_count < end_count:
+        print(start_count, end_count)
+        update_csv(start_count, end_count, df)
+        start_count = start_count + 10
+        end_count = end_count + 10
+        if num_of_rows < end_count:
+            end_count = num_of_rows
+
 
 
 if __name__ == "__main__":
