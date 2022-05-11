@@ -47,13 +47,14 @@ def update_csv(min, max, df):
             #     df.loc[i, 'text'] = long_text
             #     df.to_csv(csv_path, index=False)
 
-    tweet_list = get_tweets(multiple_tweet_url + id_list + '&tweet.fields=created_at,text')
+    tweet_list = get_tweets(multiple_tweet_url + id_list + '&tweet.fields=created_at,text,entities')
 
     for i in range(min, max):
         row = df.loc[[i]]
         if row['is_referenced_tweet'].values[0]:
             formatted_id = row['referenced_tweet_id'].values[0].split("TW")[1]
-            df.loc[i, 'text'] = tweet_list.get(formatted_id)
+            df.loc[i, 'text'] = tweet_list.get(formatted_id).get('text')
+            df.loc[i, 'hashtags'] = tweet_list.get(formatted_id).get('hashtags')
             df.to_csv(csv_path, index=False)
     # with open('posts32.csv', 'w', encoding='UTF8', newline='') as f:
     #     writer = csv.writer(f)
@@ -67,7 +68,11 @@ def get_tweets(url):
     tweets_dict = {}
     if response.get('data'):
         for tweet in response['data']:
-            tweets_dict[tweet['id']] = tweet['text']
+            hashtags = ''
+            if tweet['entities'].get('hashtags'):
+                for hashtag in tweet['entities']['hashtags']:
+                    hashtags = hashtags + ' ' + hashtag['tag']
+            tweets_dict[tweet['id']] = {'text': tweet['text'], 'hashtags': hashtags}
     return tweets_dict
     #     if result.get('text'):
     #         return response.json()['data']['text']
