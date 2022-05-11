@@ -71,11 +71,12 @@ def connect_to_endpoint(url, params, hash_tag):
                 data_row.append('')
 
 
-
-            # if tweet['entities'].get('hashtags'):
-            #     for hashtag in tweet['entities']['hashtags']:
-            #         data_row.append(hashtag['tag'])
-            #     print(tweet['lang'])
+            hashtags = ''
+            if tweet['entities'].get('hashtags'):
+                for hashtag in tweet['entities']['hashtags']:
+                    hashtags = hashtags + ' ' + hashtag['tag']
+                data_row.append(hashtags)
+                print(hashtags)
 
             data_rows.append(data_row)
             data_row = []
@@ -124,7 +125,7 @@ def main():
         query_params = {'query': hash_tag,
                         'tweet.fields': 'created_at,lang,public_metrics,referenced_tweets,text,entities,id,'
                                         'possibly_sensitive,source,withheld,attachments',
-                        'max_results': 50
+                        'max_results': 10
                         }
 
         counter_param = {'query': hash_tag}
