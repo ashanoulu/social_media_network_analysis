@@ -35,8 +35,8 @@ for sentence in tweets:
         writer.writerows(data_rows)
 
 arr = numpy.array(data_rows)
-new_arr = arr*100
-test_arr = [(0.05, 0.9, 0.05)]
+# new_arr = arr*100
+# test_arr = [(0.05, 0.9, 0.05)]
 
 scale: int = 1
 fontsize = 8
