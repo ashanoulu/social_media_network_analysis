@@ -53,26 +53,29 @@ def update_csv(min, max, df):
         row = df.loc[[i]]
         if row['is_referenced_tweet'].values[0]:
             formatted_id = row['referenced_tweet_id'].values[0].split("TW")[1]
-            df.loc[i, 'text'] = tweet_list.get(formatted_id).get('text')
-            df.loc[i, 'hashtags'] = tweet_list.get(formatted_id).get('hashtags')
-            df.to_csv(csv_path, index=False)
+            if tweet_list.get(formatted_id) is not None:
+                df.loc[i, 'text'] = tweet_list.get(formatted_id).get('text')
+                df.loc[i, 'hashtags'] = tweet_list.get(formatted_id).get('hashtags')
+                df.to_csv(csv_path, index=False)
     # with open('posts32.csv', 'w', encoding='UTF8', newline='') as f:
     #     writer = csv.writer(f)
     #     writer.writerows(df)
 
 
-
 def get_tweets(url):
-    response = requests.get(url, auth=bearer_oauth).json()
+    request = requests.get(url, auth=bearer_oauth)
+    response = request.json()
     print(response)
     tweets_dict = {}
-    if response.get('data'):
-        for tweet in response['data']:
-            hashtags = ''
-            if tweet['entities'].get('hashtags'):
-                for hashtag in tweet['entities']['hashtags']:
-                    hashtags = hashtags + ' ' + hashtag['tag']
-            tweets_dict[tweet['id']] = {'text': tweet['text'], 'hashtags': hashtags}
+    temp_response = request.status_code
+    if request.status_code == 200:
+        if response.get('data'):
+            for tweet in response['data']:
+                hashtags = ''
+                if tweet['entities'].get('hashtags'):
+                    for hashtag in tweet['entities']['hashtags']:
+                        hashtags = hashtags + ' ' + hashtag['tag']
+                tweets_dict[tweet['id']] = {'text': tweet['text'], 'hashtags': hashtags}
     return tweets_dict
     #     if result.get('text'):
     #         return response.json()['data']['text']
@@ -83,15 +86,15 @@ def get_tweets(url):
 
 
 def main():
-    start_count = 0
-    end_count = 10
+    start_count = 11880
+    end_count = 11980
     df = panda.read_csv(csv_path, on_bad_lines='skip')
     num_of_rows = len(df)
     while start_count < end_count:
         print(start_count, end_count)
         update_csv(start_count, end_count, df)
-        start_count = start_count + 10
-        end_count = end_count + 10
+        start_count = start_count + 99
+        end_count = end_count + 99
         if num_of_rows < end_count:
             end_count = num_of_rows
 
@@ -99,3 +102,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# 11880 11980
+
+

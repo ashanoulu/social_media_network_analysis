@@ -11,19 +11,19 @@ file_header_count = ['hashtag', 'count']
 data_rows = []
 data_rows_counter = []
 
-# hash_tag_list = ['#ukraine', '#ukrainewar', '#war', '#army', '#military', '#kiev', '#ua', '#specialforces', '#donbass',
-#                  '#donbasswar', '#airsoft', '#nomockal', '#warukraine', '#tactics', '#azovsea', '#militarystile',
-#                  '#azov', '#russia', '#donetsk', '#soldiers', '#ukrainenews', '#odessa', '#ukrainianarmy', '#lviv',
-#                  '#victory', '#nato', '#kyiv', '#militaryukraine', '#news', '#freesentso']
+hash_tag_list = ['#ukraine', '#ukrainewar', '#war', '#army', '#military', '#kiev', '#ua', '#specialforces', '#donbass',
+                 '#donbasswar', '#airsoft', '#nomockal', '#warukraine', '#tactics', '#azovsea', '#militarystile',
+                 '#azov', '#russia', '#donetsk', '#soldiers', '#ukrainenews', '#odessa', '#ukrainianarmy', '#lviv',
+                 '#victory', '#nato', '#kyiv', '#militaryukraine', '#news', '#freesentso']
 
-hash_tag_list = ['#ukraine', '#ukrainewar']
+# hash_tag_list = ['#ukraine', '#ukrainewar']
 
 # To set your environment variables in your terminal run the following line:
 # export 'BEARER_TOKEN'='<your_bearer_token>'
 bearer_token = 'AAAAAAAAAAAAAAAAAAAAALDCcQEAAAAA0S%2BVPYHO9Asc1Hd5%2F3dVak0Nsew%3DmdbLOjr0JGcWjs0u93s4GUSOgH3WZxufFi0OsrdHpW04w7nd3W'  # os.environ.get("BEARER_TOKEN")
 
 search_url = "https://api.twitter.com/2/tweets/search/all"
-count_url = "https://api.twitter.com/2/tweets/counts/recent"
+count_url = "https://api.twitter.com/2/tweets/counts/all"
 single_tweet_url = "https://api.twitter.com/2/tweets/"
 
 
@@ -130,21 +130,21 @@ def main():
 
         counter_param = {'query': hash_tag}
 
-        # count = get_counts(count_url, counter_param, hash_tag)
-        # data_rows_counter.append(count)
+        count = get_counts(count_url, counter_param, hash_tag)
+        data_rows_counter.append(count)
 
-        json_response, rt_count = connect_to_endpoint(search_url, query_params, hash_tag)
-        retweets = retweets + rt_count
-        print(json.dumps(json_response, indent=4, sort_keys=True))
-        # print(json.dumps(json_response_counter, indent=4, sort_keys=True))
-        time.sleep(1)
+        # json_response, rt_count = connect_to_endpoint(search_url, query_params, hash_tag)
+        # retweets = retweets + rt_count
+        # print(json.dumps(json_response, indent=4, sort_keys=True))
+        # # print(json.dumps(json_response_counter, indent=4, sort_keys=True))
+        # time.sleep(1)
 
     with open('count.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(file_header_count)
         writer.writerows(data_rows_counter)
 
-    print(retweets)
+    # print(retweets)
 
 if __name__ == "__main__":
     main()
