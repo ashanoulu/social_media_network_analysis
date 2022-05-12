@@ -9,7 +9,7 @@ multiple_tweet_url = "https://api.twitter.com/2/tweets?ids="
 single_tweet_url = "https://api.twitter.com/2/tweets/"
 
 # csv_path = 'G:\\test\\AllDetails.csv'
-csv_path = 'posts3.csv'
+csv_path = 'dataset.csv'
 
 
 
@@ -100,8 +100,7 @@ def main():
 
 
 
-if __name__ == "__main__":
-    main()
+
 
 # 11880 11980
 
