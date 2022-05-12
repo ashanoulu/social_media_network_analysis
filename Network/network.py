@@ -14,7 +14,7 @@ def add_nodes():
 
     # data = read_csv("test.csv")
     data = read_csv("test2.csv")
-    # data = read_csv(".\..\posts3.csv")
+    # data = read_csv(".\..\dataset.csv")
     hashtag_column = data['hashtags'].tolist()
     split_row: list = []
 
@@ -45,13 +45,13 @@ def add_edges():
 def plot_graph():
     global G
     # pos = nx.circular_layout(G)
-    pos = nx.kamada_kawai_layout(G)
+    # pos = nx.kamada_kawai_layout(G)
+    # pos = nx.planar_layout(G)
+    pos = nx.spring_layout(G, k=0.2)
     plt.figure(3, figsize=(50, 50))
-    # nx.draw(G)
-    # nx.draw(G, with_labels=True, node_size=200, edgecolors='gray')
     nx.draw(G, pos=pos)
     plt.show()
-    plt.savefig('filename.pdf')
+    plt.savefig('filename.png')
 
 
 if __name__ == "__main__":

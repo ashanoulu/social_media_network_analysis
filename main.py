@@ -82,7 +82,7 @@ def connect_to_endpoint(url, params, hash_tag):
             data_row = []
             i = i + 1
 
-    with open('posts3.csv', 'w', encoding='UTF8', newline='') as f:
+    with open('dataset.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(file_header)
         writer.writerows(data_rows)
@@ -148,3 +148,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
