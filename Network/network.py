@@ -63,8 +63,8 @@ def plot_graph_2():
 
     #### draw graph ####
     fig, ax = plt.subplots(figsize=(90, 60))
-    # pos = nx.spring_layout(H, k=0.15, seed=4572321)
-    pos = nx.kamada_kawai_layout(H)
+    pos = nx.spring_layout(H, k=0.15, seed=4572321)
+    # pos = nx.kamada_kawai_layout(H)
     node_size = [v * 20000 for v in b_centrality.values()]
     nx.draw_networkx(
         H,
