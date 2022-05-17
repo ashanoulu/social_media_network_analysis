@@ -82,7 +82,7 @@ def connect_to_endpoint(url, params, hash_tag):
             data_row = []
             i = i + 1
 
-    with open('dataset.csv', 'w', encoding='UTF8', newline='') as f:
+    with open('dataset_small.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(file_header)
         writer.writerows(data_rows)
@@ -125,24 +125,24 @@ def main():
         query_params = {'query': hash_tag,
                         'tweet.fields': 'created_at,lang,public_metrics,referenced_tweets,text,entities,id,'
                                         'possibly_sensitive,source,withheld,attachments',
-                        'max_results': 10
+                        'max_results': 200
                         }
 
-        counter_param = {'query': hash_tag}
+        # counter_param = {'query': hash_tag}
+        #
+        # count = get_counts(count_url, counter_param, hash_tag)
+        # data_rows_counter.append(count)
 
-        count = get_counts(count_url, counter_param, hash_tag)
-        data_rows_counter.append(count)
+        json_response, rt_count = connect_to_endpoint(search_url, query_params, hash_tag)
+        retweets = retweets + rt_count
+        print(json.dumps(json_response, indent=4, sort_keys=True))
+        # print(json.dumps(json_response_counter, indent=4, sort_keys=True))
+        time.sleep(1)
 
-        # json_response, rt_count = connect_to_endpoint(search_url, query_params, hash_tag)
-        # retweets = retweets + rt_count
-        # print(json.dumps(json_response, indent=4, sort_keys=True))
-        # # print(json.dumps(json_response_counter, indent=4, sort_keys=True))
-        # time.sleep(1)
-
-    with open('count.csv', 'w', encoding='UTF8', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(file_header_count)
-        writer.writerows(data_rows_counter)
+    # with open('count.csv', 'w', encoding='UTF8', newline='') as f:
+    #     writer = csv.writer(f)
+    #     writer.writerow(file_header_count)
+    #     writer.writerows(data_rows_counter)
 
     # print(retweets)
 

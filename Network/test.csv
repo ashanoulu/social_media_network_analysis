@@ -1,13 +1,17 @@
-num,hashtag,created_at,id,lang,source,like_count,quote_count,reply_count,retweet_count,text,is_referenced_tweet,referenced_tweet_id,hashtags
-1,#ukraine,2022-05-11T22:46:55.000Z,TW1524521462303920128,en,Twitter for Android,0,0,0,0,🐉💯“I'm not in this world to live up to your expectations and you're not in this world to live up to mine.” -Bruce Lee https://t.co/WO8uIAFMHB,TRUE,TW1524457672400990209, A B C
-2,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459556753415,en,Twitter for iPhone,0,0,0,254,"#Russia has moved almost all its rocket launchers to the border with #Ukraine. Heavy rocket strikes are expected all across #Ukraine tonight and in the early morning hours.
-
-🇺🇦✊🏻",TRUE,TW1524507717859258368, A N R
-3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,Twitter for Android,0,0,0,499,"JD Vance would be really upset if you retweeted this to show the large Ukrainian-American community in #Ohio what he really thinks about #Ukraine
-https://t.co/dnSlcTVEOa",TRUE,TW1524459476543287302, C D E
-3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,Twitter for Android,0,0,0,499,"JD Vance would be really upset if you retweeted this to show the large Ukrainian-American community in #Ohio what he really thinks about #Ukraine
-https://t.co/dnSlcTVEOa",TRUE,TW1524459476543287302, C R M
-3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,Twitter for Android,0,0,0,499,"JD Vance would be really upset if you retweeted this to show the large Ukrainian-American community in #Ohio what he really thinks about #Ukraine
-https://t.co/dnSlcTVEOa",TRUE,TW1524459476543287302, F Q A
-3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,Twitter for Android,0,0,0,499,"JD Vance would be really upset if you retweeted this to show the large Ukrainian-American community in #Ohio what he really thinks about #Ukraine
-https://t.co/dnSlcTVEOa",TRUE,TW1524459476543287302, P Q Z
+num,hashtag,created_at,id,lang,source,like_count,quote_count,reply_count,retweet_count,,is_referenced_tweet,referenced_tweet_id,hashtags
+1,#ukraine,2022-05-11T22:46:55.000Z,TW1524521462303920128,en,,0,0,0,0,,TRUE,TW1524457672400990209, A B C
+2,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459556753415,en,,0,0,0,254,,TRUE,TW1524507717859258368, A N R
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, C D E
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, C R M
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, F Q A
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, P Q Z
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, A N C
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, S T K
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, A C N
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, A B F
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, B D A
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, O N B
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, A P M
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, A N C
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, F A Q
+3,#ukraine,2022-05-11T22:46:54.000Z,TW1524521459485270016,en,,0,0,0,499,,TRUE,TW1524459476543287302, C N B
