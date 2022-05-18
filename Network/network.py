@@ -145,41 +145,51 @@ def apply_botometer():
     print(top_nodes)
     df = panda.read_csv(csv_path, on_bad_lines='skip')
     num_of_rows = len(df)
-    csv_data = []
+    top_node_data_dict = {}
     for i in range(0, num_of_rows):
         row = df.loc[[i]]
-        hashtag_list = row['hashtags'].values[0].upper().split(' ')
+        hashtag_list = str(row['hashtags'].values[0]).upper().split(' ')
         for top_node in top_nodes:
-            ee = top_node[0].upper()
-            if top_node[0].upper() in hashtag_list:
+            node_name = top_node[0].upper()
+            if node_name in hashtag_list:
+                if top_node_data_dict.get(node_name) is not None:
+                    ee = top_node_data_dict.get(node_name)
+                    top_node_data_dict.get(node_name).append(str(row['author_id'].values[0].split('UID')[1]))
+                else:
+                    id_list = []
+                    id_list.append(str(row['author_id'].values[0].split('UID')[1]))
+                    top_node_data_dict[node_name] = id_list
 
-                data_row: list = []
 
-                data_row.append(i)
-                data_row.append(row['hashtag'].values[0])
-                data_row.append(row['created_at'].values[0])
-                data_row.append(row['id'].values[0])
-                data_row.append(row['lang'].values[0])
-                data_row.append(row['source'].values[0])
-                data_row.append(row['like_count'].values[0])
-                data_row.append(row['quote_count'].values[0])
-                data_row.append(row['reply_count'].values[0])
-                data_row.append(row['retweet_count'].values[0])
-                data_row.append(row['text'].values[0])
-                data_row.append(row['author_id'].values[0])
-                data_row.append(row['is_referenced_tweet'].values[0])
-                data_row.append(row['referenced_tweet_id'].values[0])
-                data_row.append(row['hashtags'].values[0])
-                csv_data.append(data_row)
-                break
+    print(top_node_data_dict)
 
-    file_header = ['num', 'hashtag', 'created_at', 'id', 'lang', 'source', 'like_count', 'quote_count', 'reply_count',
-                   'retweet_count', 'text', 'author_id', 'is_referenced_tweet', 'referenced_tweet_id', 'hashtags']
+                # data_row: list = []
+                #
+                # data_row.append(i)
+                # data_row.append(row['hashtag'].values[0])
+                # data_row.append(row['created_at'].values[0])
+                # data_row.append(row['id'].values[0])
+                # data_row.append(row['lang'].values[0])
+                # data_row.append(row['source'].values[0])
+                # data_row.append(row['like_count'].values[0])
+                # data_row.append(row['quote_count'].values[0])
+                # data_row.append(row['reply_count'].values[0])
+                # data_row.append(row['retweet_count'].values[0])
+                # data_row.append(row['text'].values[0])
+                # data_row.append(row['author_id'].values[0])
+                # data_row.append(row['is_referenced_tweet'].values[0])
+                # data_row.append(row['referenced_tweet_id'].values[0])
+                # data_row.append(row['hashtags'].values[0])
+                # csv_data.append(data_row)
+                # break
 
-    with open('top_node_data.csv', 'w', encoding='UTF8', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(file_header)
-        writer.writerows(csv_data)
+    # file_header = ['num', 'hashtag', 'created_at', 'id', 'lang', 'source', 'like_count', 'quote_count', 'reply_count',
+    #                'retweet_count', 'text', 'author_id', 'is_referenced_tweet', 'referenced_tweet_id', 'hashtags']
+    #
+    # with open('top_node_data.csv', 'w', encoding='UTF8', newline='') as f:
+    #     writer = csv.writer(f)
+    #     writer.writerow(file_header)
+    #     writer.writerows(csv_data)
 
 
 def label_propagation():
