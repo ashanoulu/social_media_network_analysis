@@ -13,16 +13,6 @@ hashtags: list = []
 G = nx.Graph()
 csv_path = '.\..\hashtags.csv'
 
-rapidapi_key = "d9b7a4190cmsh38c6c796119704dp1dc402jsn906b12a1df42"
-twitter_app_auth = {
-    'consumer_key': 'WyFMw1QulAnTP5ZaN9R2GJW2O',
-    'consumer_secret': 'wYBqkFEkFMmV1G308VmUdJtN1rKFq30Ejet3fm029fIxbI2JTA',
-    'access_token': '1522681302008442880-LWEon8S6BEMpI0JDSrSZysDa8ut5iT',
-    'access_token_secret': 'mNzHQX88vazrCI8naMgl5hkTcQ06EEU5ajnuToRikEuzu',
-  }
-bom = botometer.Botometer(wait_on_ratelimit=True, rapidapi_key=rapidapi_key, **twitter_app_auth)
-result = bom.check_account(1548959833)
-print(result)
 
 def add_nodes():
     global hashtags
@@ -114,7 +104,7 @@ def average_degree_centrality():
     dc_dict = degree_centrality(G)
     for val in dc_dict.values():
         result += val
-    return result/len(dc_dict)
+    return result / len(dc_dict)
 
 
 def get_diameter():
@@ -174,25 +164,96 @@ def apply_botometer():
     for tag in top_node_data_dict:
         print(str(tag) + str(len(top_node_data_dict[tag])) + str(top_node_data_dict[tag]))
 
-                # data_row: list = []
-                #
-                # data_row.append(i)
-                # data_row.append(row['hashtag'].values[0])
-                # data_row.append(row['created_at'].values[0])
-                # data_row.append(row['id'].values[0])
-                # data_row.append(row['lang'].values[0])
-                # data_row.append(row['source'].values[0])
-                # data_row.append(row['like_count'].values[0])
-                # data_row.append(row['quote_count'].values[0])
-                # data_row.append(row['reply_count'].values[0])
-                # data_row.append(row['retweet_count'].values[0])
-                # data_row.append(row['text'].values[0])
-                # data_row.append(row['author_id'].values[0])
-                # data_row.append(row['is_referenced_tweet'].values[0])
-                # data_row.append(row['referenced_tweet_id'].values[0])
-                # data_row.append(row['hashtags'].values[0])
-                # csv_data.append(data_row)
-                # break
+    rapidapi_key = "d9b7a4190cmsh38c6c796119704dp1dc402jsn906b12a1df42"
+    twitter_app_auth = {
+        'consumer_key': 'WyFMw1QulAnTP5ZaN9R2GJW2O',
+        'consumer_secret': 'wYBqkFEkFMmV1G308VmUdJtN1rKFq30Ejet3fm029fIxbI2JTA',
+        'access_token': '1522681302008442880-LWEon8S6BEMpI0JDSrSZysDa8ut5iT',
+        'access_token_secret': 'mNzHQX88vazrCI8naMgl5hkTcQ06EEU5ajnuToRikEuzu',
+    }
+    bom = botometer.Botometer(wait_on_ratelimit=True, rapidapi_key=rapidapi_key, **twitter_app_auth)
+
+    bot_count = 0
+    normal_users = 0
+    tags = []
+    normal_user_count_list = []
+    bot_count_list = []
+    csv_rows = []
+    for tag_node in top_node_data_dict:
+        try:
+            bot_measurements = bom.check_accounts_in(top_node_data_dict[tag_node])
+            # bot_measurements = bom.check_accounts_in([1378016874424905735, 795402912151244800])
+            for result in bot_measurements:
+                if result[1]['cap']['universal'] > 0.81:
+                    bot_count = bot_count + 1
+                else:
+                    normal_users = normal_users + 1
+
+                print(result[1]['cap']['universal'])
+        except Exception as e:
+            print(str(e))
+        finally:
+            tags.append(tag_node)
+            normal_user_count_list.append(normal_users)
+            bot_count_list.append(bot_count)
+            data_row = []
+            data_row.append(tag_node)
+            data_row.append(normal_users)
+            data_row.append(bot_count)
+            csv_rows.append(data_row)
+            bot_count = 0
+            normal_users = 0
+            break
+
+        tags.append(tag_node)
+        normal_user_count_list.append(normal_users)
+        bot_count_list.append(bot_count)
+        data_row = []
+        data_row.append(tag_node)
+        data_row.append(normal_users)
+        data_row.append(bot_count)
+        csv_rows.append(data_row)
+        bot_count = 0
+        normal_users = 0
+
+    file_header = ['tag', 'normal_users', 'bot_users']
+
+    with open('bot.csv', 'w', encoding='UTF8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(file_header)
+        writer.writerows(csv_rows)
+    width = 0.35  # the width of the bars: can also be len(x) sequence
+
+    fig, ax = plt.subplots()
+
+    ax.bar(tags, normal_user_count_list, width, label='Normal Users')
+    ax.bar(tags, bot_count_list, width, bottom=normal_user_count_list, label='Bot Users')
+
+    ax.set_ylabel('Count')
+    ax.set_title('Count by bot/normal users')
+    ax.legend()
+
+    plt.show()
+
+    # data_row: list = []
+    #
+    # data_row.append(i)
+    # data_row.append(row['hashtag'].values[0])
+    # data_row.append(row['created_at'].values[0])
+    # data_row.append(row['id'].values[0])
+    # data_row.append(row['lang'].values[0])
+    # data_row.append(row['source'].values[0])
+    # data_row.append(row['like_count'].values[0])
+    # data_row.append(row['quote_count'].values[0])
+    # data_row.append(row['reply_count'].values[0])
+    # data_row.append(row['retweet_count'].values[0])
+    # data_row.append(row['text'].values[0])
+    # data_row.append(row['author_id'].values[0])
+    # data_row.append(row['is_referenced_tweet'].values[0])
+    # data_row.append(row['referenced_tweet_id'].values[0])
+    # data_row.append(row['hashtags'].values[0])
+    # csv_data.append(data_row)
+    # break
 
     # file_header = ['num', 'hashtag', 'created_at', 'id', 'lang', 'source', 'like_count', 'quote_count', 'reply_count',
     #                'retweet_count', 'text', 'author_id', 'is_referenced_tweet', 'referenced_tweet_id', 'hashtags']
@@ -253,7 +314,5 @@ if __name__ == "__main__":
     # plot_degree_distribution()
     # plot_clustering()
     # label_propagation()
-    # apply_botometer()
+    apply_botometer()
     # plot_graph_2()
-
-
