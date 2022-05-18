@@ -7,11 +7,22 @@ import pandas as panda
 from networkx import *
 from networkx.algorithms.community.label_propagation import label_propagation_communities
 from pandas import *
+import botometer
 
 hashtags: list = []
 G = nx.Graph()
 csv_path = '.\..\hashtags.csv'
 
+rapidapi_key = "d9b7a4190cmsh38c6c796119704dp1dc402jsn906b12a1df42"
+twitter_app_auth = {
+    'consumer_key': 'WyFMw1QulAnTP5ZaN9R2GJW2O',
+    'consumer_secret': 'wYBqkFEkFMmV1G308VmUdJtN1rKFq30Ejet3fm029fIxbI2JTA',
+    'access_token': '1522681302008442880-LWEon8S6BEMpI0JDSrSZysDa8ut5iT',
+    'access_token_secret': 'mNzHQX88vazrCI8naMgl5hkTcQ06EEU5ajnuToRikEuzu',
+  }
+bom = botometer.Botometer(wait_on_ratelimit=True, rapidapi_key=rapidapi_key, **twitter_app_auth)
+result = bom.check_account(1548959833)
+print(result)
 
 def add_nodes():
     global hashtags
@@ -161,7 +172,7 @@ def apply_botometer():
                     top_node_data_dict[node_name] = id_list
 
     for tag in top_node_data_dict:
-        print(str(tag) + str(top_node_data_dict[tag]))
+        print(str(tag) + str(len(top_node_data_dict[tag])) + str(top_node_data_dict[tag]))
 
                 # data_row: list = []
                 #
@@ -242,7 +253,7 @@ if __name__ == "__main__":
     # plot_degree_distribution()
     # plot_clustering()
     # label_propagation()
-    apply_botometer()
+    # apply_botometer()
     # plot_graph_2()
 
 
