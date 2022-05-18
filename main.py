@@ -11,12 +11,12 @@ file_header_count = ['hashtag', 'count']
 data_rows = []
 data_rows_counter = []
 
-# hash_tag_list = ['#ukraine', '#ukrainewar', '#war', '#army', '#military', '#kiev', '#ua', '#specialforces', '#donbass',
-#                  '#donbasswar', '#airsoft', '#nomockal', '#warukraine', '#tactics', '#azovsea', '#militarystile',
-#                  '#azov', '#russia', '#donetsk', '#soldiers', '#ukrainenews', '#odessa', '#ukrainianarmy', '#lviv',
-#                  '#victory', '#nato', '#kyiv', '#militaryukraine', '#news', '#freesentso']
+hash_tag_list = ['#ukraine', '#ukrainewar', '#war', '#army', '#military', '#kiev', '#ua', '#specialforces', '#donbass',
+                 '#donbasswar', '#airsoft', '#nomockal', '#warukraine', '#tactics', '#azovsea', '#militarystile',
+                 '#azov', '#russia', '#donetsk', '#soldiers', '#ukrainenews', '#odessa', '#ukrainianarmy', '#lviv',
+                 '#victory', '#nato', '#kyiv', '#militaryukraine', '#news', '#freesentso']
 
-hash_tag_list = ['#ukraine', '#ukrainewar']
+# hash_tag_list = ['#ukraine', '#ukrainewar']
 
 # To set your environment variables in your terminal run the following line:
 # export 'BEARER_TOKEN'='<your_bearer_token>'
@@ -125,7 +125,7 @@ def main():
         query_params = {'query': hash_tag,
                         'tweet.fields': 'created_at,lang,public_metrics,referenced_tweets,text,entities,id,'
                                         'possibly_sensitive,source,withheld,attachments,author_id',
-                        'max_results': 20
+                        'max_results': 200
                         }
 
         # counter_param = {'query': hash_tag}

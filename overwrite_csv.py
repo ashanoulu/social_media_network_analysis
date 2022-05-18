@@ -10,7 +10,6 @@ single_tweet_url = "https://api.twitter.com/2/tweets/"
 
 # csv_path = 'G:\\test\\AllDetails.csv'
 csv_path = 'dataset_small.csv'
-file_header = ['hashtags']
 
 
 
@@ -90,19 +89,61 @@ def get_tweets(url):
 
 
 def extract_hashtags():
+    file_header = ['user_id', 'text', 'hashtags']
     data = panda.read_csv(csv_path, on_bad_lines='skip')
     hashtags = data['hashtags'].tolist()
+    texts = data['text'].tolist()
+    users = data['author_id'].tolist()
+
     hashtag_list: list = []
+    text_list: list = []
+    user_list: list = []
     test_str = " test123 STRiNG"
-    for row in hashtags:
-        print(str(row))
-        if str(row) != 'nan':
-            hashtag_list.append(str(row).lower())
+    for i in range(0, len(hashtags)):
+        if str(hashtags[i]) != 'nan':
+            hashtag_list.append(str(hashtags[i]).lower())
+        else:
+            hashtag_list.append(str(''))
+
+    for i in range(0, len(texts)):
+        if str(texts[i]) != 'nan':
+            text_list.append(str(texts[i]))
+        else:
+            text_list.append(str(''))
+
+    for i in range(0, len(users)):
+        if str(users[i]) != 'nan':
+            user_list.append(str(users[i]))
+        else:
+            user_list.append(str(''))
+
+    combined_rows = zip(user_list, text_list, hashtag_list)
     with open('hashtags.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(file_header)
-        for row in hashtag_list:
-            writer.writerow([row])
+        for val in combined_rows:
+            writer.writerow(val)
+
+
+# def extract_hashtags():
+#     data = panda.read_csv(csv_path, on_bad_lines='skip')
+#     hashtags = data['hashtags'].tolist()
+#     texts = data['text'].tolist()
+#     users = data['author_id'].tolist()
+#
+#     hashtag_list: list = []
+#     text_list: list = []
+#     user_list: list = []
+#     test_str = " test123 STRiNG"
+#     for row in hashtags:
+#         print(str(row))
+#         if str(row) != 'nan':
+#             hashtag_list.append(str(row).lower())
+#     with open('hashtags.csv', 'w', encoding='UTF8', newline='') as f:
+#         writer = csv.writer(f)
+#         writer.writerow(file_header)
+#         for row in hashtag_list:
+#             writer.writerow([row])
 
 
 def main():
@@ -117,12 +158,9 @@ def main():
         end_count = end_count + 99
         if num_of_rows < end_count:
             end_count = num_of_rows
-    # extract_hashtags()
+    extract_hashtags()
 
 
 if __name__ == "__main__":
     main()
-
-# 11880 11980
-
 
