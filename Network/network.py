@@ -1,8 +1,10 @@
 import csv
 import networkx as nx
 import matplotlib.pyplot as plt
+import numpy as np
 # import scipy as sp
 from networkx import *
+from networkx.algorithms.community.label_propagation import label_propagation_communities
 from pandas import *
 
 hashtags: list = []
@@ -27,7 +29,7 @@ def add_nodes():
             # print(split_row)
         for tag in split_row:
             G.add_node(tag)
-    print(hashtags)
+    # print(hashtags)
 
 
 def add_edges():
@@ -40,7 +42,7 @@ def add_edges():
                 if tag != row[i]:
                     G.add_edge(tag, row[i])
         progress += 1
-        print(progress)
+        # print(progress)
 
 
 def plot_graph():
@@ -62,9 +64,8 @@ def plot_graph_2():
     b_centrality = nx.betweenness_centrality(H, k=10, endpoints=True)
 
     #### draw graph ####
-    fig, ax = plt.subplots(figsize=(90, 60))
+    fig, ax = plt.subplots(figsize=(40, 30))
     pos = nx.spring_layout(H, k=0.15, seed=4572321)
-    # pos = nx.kamada_kawai_layout(H)
     node_size = [v * 20000 for v in b_centrality.values()]
     nx.draw_networkx(
         H,
@@ -76,17 +77,9 @@ def plot_graph_2():
     )
     # Title/legend
     font = {"color": "k", "fontweight": "bold", "fontsize": 20}
-    ax.set_title("Gene functional association network (C. elegans)", font)
+    ax.set_title("Social Network Graph", font)
     # Change font color for legend
     font["color"] = "r"
-    ax.text(
-        0.80,
-        0.10,
-        "node color = community structure",
-        horizontalalignment="center",
-        transform=ax.transAxes,
-        fontdict=font,
-    )
     ax.text(
         0.80,
         0.06,
@@ -118,14 +111,63 @@ def get_diameter():
     return diameter(largest_connected_graph)
 
 
+def plot_degree_distribution():
+    global G
+    plt.figure(figsize=(12, 8))
+
+    degree_freq = nx.degree_histogram(G)
+    degrees = range(len(degree_freq))
+    plt.loglog(degrees[0:], degree_freq[0:], 'go-')
+    plt.xlabel('Degree')
+    plt.ylabel('Frequency')
+    plt.show()
+
+
+def plot_clustering():
+    global G
+    plt.figure(figsize=(12, 8))
+
+    clustering_coeff = clustering(G)
+    coeff_list = clustering_coeff.values()
+    print(coeff_list)
+    plt.hist(coeff_list)
+    plt.xlabel('Clustering Coefficient')
+    plt.ylabel('Frequency')
+    plt.show()
+
+
+def label_propagation():
+    global G
+
+    communities = label_propagation_communities(G)
+    print(len(communities))
+    for vals in communities:
+        print(vals)
+        H = G.subgraph(vals)
+        graph_edges = H.number_of_edges()
+        graph_nodes = H.number_of_nodes()
+        graph_diameter = diameter(H.subgraph(max(connected_components(H), key=len)))
+        clust_coeff = average_clustering(H, count_zeros=True)
+        print(
+            str('Number of Edges = ') + str(graph_edges) +
+            str(', Number of Nodes = ') + str(graph_nodes) +
+            str(', Graph Diameter = ') + str(graph_diameter) +
+            str(', Clustering Coefficient = ') + str(clust_coeff)
+        )
+
+
 if __name__ == "__main__":
     add_nodes()
     add_edges()
     print(str("Number of Nodes =\t") + str(G.number_of_nodes()))
     print(str("Number of Edges =\t") + str(G.number_of_edges()))
     print(str("Average Degree Centrality =\t") + str(average_degree_centrality()))
+    print(str("Average Clustering Coefficient =\t") + str(average_clustering(G, count_zeros=True)))
     # print(str("Diameter =\t") + str(get_diameter()))
+    # plot_degree_distribution()
+    # plot_clustering()
+    label_propagation()
 
-    plot_graph_2()
+    # plot_graph_2()
 
 

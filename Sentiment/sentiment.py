@@ -4,7 +4,7 @@ from pandas import *
 import ternary
 import numpy
 
-data = read_csv(".\..\posts3.csv")
+data = read_csv(".\..\dataset_small.csv")
 
 tweets = data['text'].tolist()
 
@@ -39,7 +39,7 @@ arr = numpy.array(data_rows)
 # test_arr = [(0.05, 0.9, 0.05)]
 
 scale: int = 1
-fontsize = 8
+fontsize = 14
 offset = 0.07
 
 figure, tax = ternary.figure(scale=scale)
@@ -55,4 +55,4 @@ tax.ticks(axis='lbr', linewidth=0.8, multiple=1)
 
 tax.show()
 
-tax.savefig('filename.pdf')
+# tax.savefig('filename.pdf')
