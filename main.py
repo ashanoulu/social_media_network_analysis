@@ -5,18 +5,18 @@ import csv
 import time
 
 file_header = ['num', 'hashtag', 'created_at', 'id', 'lang', 'source', 'like_count', 'quote_count', 'reply_count',
-               'retweet_count', 'text', 'is_referenced_tweet', 'referenced_tweet_id', 'hashtags']
+               'retweet_count', 'text', 'author_id', 'is_referenced_tweet', 'referenced_tweet_id', 'hashtags']
 file_header_count = ['hashtag', 'count']
 
 data_rows = []
 data_rows_counter = []
 
-hash_tag_list = ['#ukraine', '#ukrainewar', '#war', '#army', '#military', '#kiev', '#ua', '#specialforces', '#donbass',
-                 '#donbasswar', '#airsoft', '#nomockal', '#warukraine', '#tactics', '#azovsea', '#militarystile',
-                 '#azov', '#russia', '#donetsk', '#soldiers', '#ukrainenews', '#odessa', '#ukrainianarmy', '#lviv',
-                 '#victory', '#nato', '#kyiv', '#militaryukraine', '#news', '#freesentso']
+# hash_tag_list = ['#ukraine', '#ukrainewar', '#war', '#army', '#military', '#kiev', '#ua', '#specialforces', '#donbass',
+#                  '#donbasswar', '#airsoft', '#nomockal', '#warukraine', '#tactics', '#azovsea', '#militarystile',
+#                  '#azov', '#russia', '#donetsk', '#soldiers', '#ukrainenews', '#odessa', '#ukrainianarmy', '#lviv',
+#                  '#victory', '#nato', '#kyiv', '#militaryukraine', '#news', '#freesentso']
 
-# hash_tag_list = ['#ukraine', '#ukrainewar']
+hash_tag_list = ['#ukraine', '#ukrainewar']
 
 # To set your environment variables in your terminal run the following line:
 # export 'BEARER_TOKEN'='<your_bearer_token>'
@@ -58,12 +58,12 @@ def connect_to_endpoint(url, params, hash_tag):
             data_row.append(tweet['public_metrics']['reply_count'])
             data_row.append(tweet['public_metrics']['retweet_count'])
             data_row.append(tweet['text'])
+            data_row.append('UID' + str(tweet['author_id']))
 
             if tweet.get('referenced_tweets'):
                 retweet_count+=1
                 data_row.append('true')
                 data_row.append('TW' + str(tweet['referenced_tweets'][0]['id']))
-
 
                 # data_row.append(single_tweet(single_tweet_url + tweet['referenced_tweets'][0]['id'] +'?tweet.fields=created_at,text'))
             else:
@@ -124,8 +124,8 @@ def main():
     for hash_tag in hash_tag_list:
         query_params = {'query': hash_tag,
                         'tweet.fields': 'created_at,lang,public_metrics,referenced_tweets,text,entities,id,'
-                                        'possibly_sensitive,source,withheld,attachments',
-                        'max_results': 200
+                                        'possibly_sensitive,source,withheld,attachments,author_id',
+                        'max_results': 20
                         }
 
         # counter_param = {'query': hash_tag}

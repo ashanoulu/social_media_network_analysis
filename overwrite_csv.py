@@ -48,7 +48,7 @@ def update_csv(min, max, df):
             #     df.loc[i, 'text'] = long_text
             #     df.to_csv(csv_path, index=False)
 
-    tweet_list = get_tweets(multiple_tweet_url + id_list + '&tweet.fields=created_at,text,entities')
+    tweet_list = get_tweets(multiple_tweet_url + id_list + '&tweet.fields=created_at,text,entities,author_id')
 
     for i in range(min, max):
         row = df.loc[[i]]
@@ -57,6 +57,7 @@ def update_csv(min, max, df):
             if tweet_list.get(formatted_id) is not None:
                 df.loc[i, 'text'] = tweet_list.get(formatted_id).get('text')
                 df.loc[i, 'hashtags'] = tweet_list.get(formatted_id).get('hashtags')
+                df.loc[i, 'author_id'] = tweet_list.get(formatted_id).get('author_id')
                 df.to_csv(csv_path, index=False)
     # with open('posts32.csv', 'w', encoding='UTF8', newline='') as f:
     #     writer = csv.writer(f)
@@ -77,7 +78,8 @@ def get_tweets(url):
                     if tweet['entities'].get('hashtags'):
                         for hashtag in tweet['entities']['hashtags']:
                             hashtags = hashtags + ' ' + hashtag['tag']
-                    tweets_dict[tweet['id']] = {'text': tweet['text'], 'hashtags': hashtags}
+                    tweets_dict[tweet['id']] = {'text': tweet['text'], 'hashtags': hashtags,
+                                                'author_id': 'UID' + str(tweet['author_id'])}
     return tweets_dict
     #     if result.get('text'):
     #         return response.json()['data']['text']
@@ -93,7 +95,7 @@ def extract_hashtags():
     hashtag_list: list = []
     test_str = " test123 STRiNG"
     for row in hashtags:
-        # print(str(row))
+        print(str(row))
         if str(row) != 'nan':
             hashtag_list.append(str(row).lower())
     with open('hashtags.csv', 'w', encoding='UTF8', newline='') as f:
@@ -104,18 +106,18 @@ def extract_hashtags():
 
 
 def main():
-    # start_count = 0
-    # end_count = 100
-    # df = panda.read_csv(csv_path, on_bad_lines='skip')
-    # num_of_rows = len(df)
-    # while start_count < end_count:
-    #     print(start_count, end_count)
-    #     update_csv(start_count, end_count, df)
-    #     start_count = start_count + 99
-    #     end_count = end_count + 99
-    #     if num_of_rows < end_count:
-    #         end_count = num_of_rows
-    extract_hashtags()
+    start_count = 0
+    end_count = 100
+    df = panda.read_csv(csv_path, on_bad_lines='skip')
+    num_of_rows = len(df)
+    while start_count < end_count:
+        print(start_count, end_count)
+        update_csv(start_count, end_count, df)
+        start_count = start_count + 99
+        end_count = end_count + 99
+        if num_of_rows < end_count:
+            end_count = num_of_rows
+    # extract_hashtags()
 
 
 if __name__ == "__main__":

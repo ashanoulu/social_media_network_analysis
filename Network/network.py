@@ -15,9 +15,9 @@ def add_nodes():
     global hashtags
     global G
 
-    # data = read_csv("test.csv")
+    data = read_csv("test.csv")
     # data = read_csv("test2.csv")
-    data = read_csv(".\..\hashtags.csv")
+    # data = read_csv(".\..\hashtags.csv")
     hashtag_column = data['hashtags'].tolist()
     split_row: list = []
 
@@ -141,6 +141,7 @@ def label_propagation():
 
     communities = label_propagation_communities(G)
     print(len(communities))
+    csv_data = []
     for vals in communities:
         print(vals)
         H = G.subgraph(vals)
@@ -148,6 +149,18 @@ def label_propagation():
         graph_nodes = H.number_of_nodes()
         graph_diameter = diameter(H.subgraph(max(connected_components(H), key=len)))
         clust_coeff = average_clustering(H, count_zeros=True)
+        data_row = []
+        hash_tags = ''
+        for val in vals:
+            hash_tags = hash_tags + str(val) + ' '
+
+        data_row.append(graph_edges)
+        data_row.append(graph_nodes)
+        data_row.append(graph_diameter)
+        data_row.append(clust_coeff)
+        data_row.append(hash_tags)
+        csv_data.append(data_row)
+
         print(
             str('Number of Edges = ') + str(graph_edges) +
             str(', Number of Nodes = ') + str(graph_nodes) +
@@ -155,6 +168,11 @@ def label_propagation():
             str(', Clustering Coefficient = ') + str(clust_coeff)
         )
 
+    file_header = ['edges', 'nodes', 'diameter', 'coefficient', 'hashtags']
+    with open('dataset_small.csv', 'w', encoding='UTF8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(file_header)
+        writer.writerows(csv_data)
 
 if __name__ == "__main__":
     add_nodes()
