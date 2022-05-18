@@ -10,7 +10,7 @@ from pandas import *
 
 hashtags: list = []
 G = nx.Graph()
-csv_path = './../dataset_small.csv'
+csv_path = '.\..\hashtags.csv'
 
 
 def add_nodes():
@@ -142,7 +142,7 @@ def apply_botometer():
     global G
     dc_dict = degree_centrality(G)
     top_nodes = list(sorted(dc_dict.items(), key=lambda item: item[1], reverse=True))[:10]
-    print(top_nodes)
+    # print(top_nodes)
     df = panda.read_csv(csv_path, on_bad_lines='skip')
     num_of_rows = len(df)
     top_node_data_dict = {}
@@ -154,14 +154,14 @@ def apply_botometer():
             if node_name in hashtag_list:
                 if top_node_data_dict.get(node_name) is not None:
                     ee = top_node_data_dict.get(node_name)
-                    top_node_data_dict.get(node_name).append(str(row['author_id'].values[0].split('UID')[1]))
+                    top_node_data_dict.get(node_name).append(str(row['user_id'].values[0].split('UID')[1]))
                 else:
                     id_list = []
-                    id_list.append(str(row['author_id'].values[0].split('UID')[1]))
+                    id_list.append(str(row['user_id'].values[0].split('UID')[1]))
                     top_node_data_dict[node_name] = id_list
 
-
-    print(top_node_data_dict)
+    for tag in top_node_data_dict:
+        print(str(tag) + str(top_node_data_dict[tag]))
 
                 # data_row: list = []
                 #
