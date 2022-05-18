@@ -15,9 +15,9 @@ def add_nodes():
     global hashtags
     global G
 
-    data = read_csv("test.csv")
+    # data = read_csv("test.csv")
     # data = read_csv("test2.csv")
-    # data = read_csv(".\..\hashtags.csv")
+    data = read_csv(".\..\hashtags.csv")
     hashtag_column = data['hashtags'].tolist()
     split_row: list = []
 
@@ -136,6 +136,13 @@ def plot_clustering():
     plt.show()
 
 
+def apply_botometer():
+    global G
+    dc_dict = degree_centrality(G)
+    top_nodes = list(sorted(dc_dict.items(), key=lambda item: item[1], reverse=True))[:10]
+    print(top_nodes)
+
+
 def label_propagation():
     global G
 
@@ -169,10 +176,11 @@ def label_propagation():
         )
 
     file_header = ['edges', 'nodes', 'diameter', 'coefficient', 'hashtags']
-    with open('dataset_small.csv', 'w', encoding='UTF8', newline='') as f:
+    with open('communities.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(file_header)
         writer.writerows(csv_data)
+
 
 if __name__ == "__main__":
     add_nodes()
@@ -184,8 +192,8 @@ if __name__ == "__main__":
     # print(str("Diameter =\t") + str(get_diameter()))
     # plot_degree_distribution()
     # plot_clustering()
-    label_propagation()
-
+    # label_propagation()
+    apply_botometer()
     # plot_graph_2()
 
 
