@@ -164,7 +164,8 @@ def apply_botometer():
     for tag in top_node_data_dict:
         print(str(tag) + str(len(top_node_data_dict[tag])) + str(top_node_data_dict[tag]))
 
-    rapidapi_key = "d9b7a4190cmsh38c6c796119704dp1dc402jsn906b12a1df42"
+    # rapidapi_key = "d9b7a4190cmsh38c6c796119704dp1dc402jsn906b12a1df42"
+    rapidapi_key = "56f0b3051bmsh45ea9000f634d81p152ae8jsn042bdfb2c016"
     twitter_app_auth = {
         'consumer_key': 'WyFMw1QulAnTP5ZaN9R2GJW2O',
         'consumer_secret': 'wYBqkFEkFMmV1G308VmUdJtN1rKFq30Ejet3fm029fIxbI2JTA',
@@ -173,23 +174,38 @@ def apply_botometer():
     }
     bom = botometer.Botometer(wait_on_ratelimit=True, rapidapi_key=rapidapi_key, **twitter_app_auth)
 
+    max_num_of_items = 50
+
     bot_count = 0
     normal_users = 0
     tags = []
     normal_user_count_list = []
     bot_count_list = []
     csv_rows = []
+    csv_user_id_rows = []
     for tag_node in top_node_data_dict:
+        is_bot = False
+        if len(top_node_data_dict[tag_node]) < 50:
+            max_num_of_items = len(top_node_data_dict[tag_node])
         try:
-            bot_measurements = bom.check_accounts_in(top_node_data_dict[tag_node])
+            bot_measurements = bom.check_accounts_in(top_node_data_dict[tag_node][0:max_num_of_items])
             # bot_measurements = bom.check_accounts_in([1378016874424905735, 795402912151244800])
             for result in bot_measurements:
-                if result[1]['cap']['universal'] > 0.81:
+                if result[1]['cap']['universal'] < result[1]['raw_scores']['universal']['overall']:
                     bot_count = bot_count + 1
+                    is_bot = True
                 else:
                     normal_users = normal_users + 1
 
                 print(result[1]['cap']['universal'])
+                print(normal_users, bot_count)
+                bot_results= []
+                bot_results.append(tag_node)
+                bot_results.append(result[1]['user']['user_data']['id_str'])
+                bot_results.append(result[1]['cap']['universal'])
+                bot_results.append(result[1]['raw_scores']['universal']['overall'])
+                bot_results.append(is_bot)
+                csv_user_id_rows.append(bot_results)
         except Exception as e:
             print(str(e))
         finally:
@@ -203,7 +219,6 @@ def apply_botometer():
             csv_rows.append(data_row)
             bot_count = 0
             normal_users = 0
-            break
 
         tags.append(tag_node)
         normal_user_count_list.append(normal_users)
@@ -217,11 +232,18 @@ def apply_botometer():
         normal_users = 0
 
     file_header = ['tag', 'normal_users', 'bot_users']
+    bot_file_header = ['tag', 'user_id', 'cap', 'overall', 'is_bot']
 
-    with open('bot.csv', 'w', encoding='UTF8', newline='') as f:
+    with open('bot_results1.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(file_header)
         writer.writerows(csv_rows)
+
+    with open('bot_api_data1.csv', 'w', encoding='UTF8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(bot_file_header)
+        writer.writerows(csv_user_id_rows)
+
     width = 0.35  # the width of the bars: can also be len(x) sequence
 
     fig, ax = plt.subplots()
@@ -233,6 +255,7 @@ def apply_botometer():
     ax.set_title('Count by bot/normal users')
     ax.legend()
 
+    plt.xticks(rotation='vertical')
     plt.show()
 
     # data_row: list = []
